@@ -1,0 +1,27 @@
+#apiVersion: batch/v1beta1
+# →   error: resource mapping not found for name: "sample-cronjob" namespace: "" from ".\\cronjob_sample.yml": no matches for kind "CronJob" in version 
+#      "batch/v1beta1"
+#      ensure CRDs are installed first
+#      →下記の参考記事により「batch/v1beta1」→「batch/v1」に変更
+#        https://books.google.co.jp/books?id=pH2xEAAAQBAJ&pg=PT94&lpg=PT94&dq=kubectl+cronjob+error+resource+mapping+not+found+for+name+namespace:+%22%22+from++no+matches+for+kind+%22CronJob%22+in+version+%0D%0A%22batch/v1beta1%22&source=bl&ots=HVVk6fiRYR&sig=ACfU3U2ToD6PfCr2p6MmzaOYN2TZlcBC0Q&hl=ja&sa=X&ved=2ahUKEwjpj_yu7bf-AhWC1GEKHeeRC-wQ6AF6BAgfEAM#v=onepage&q&f=false
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: sample-cronjob
+spec:
+  schedule: "*/1 * * * *"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 30
+  successfulJobsHistoryLimit: 5
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: sleep-container
+            image: centos:latest
+            command: ["sleep"]
+            args: ["30"]
+          restartPolicy: Never
+  suspend: true
